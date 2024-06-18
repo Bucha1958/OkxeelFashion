@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .group a::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 2px;
+      background: white;
+      transition: width 0.3s;
+      margin-top: 5px;
+    }
+    
+    .group a:hover::after {
+      width: 100%;
+    }
+  }
+  
