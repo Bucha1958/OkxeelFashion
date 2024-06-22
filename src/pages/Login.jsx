@@ -90,7 +90,7 @@ const Login = () => {
 
   useEffect(() => {
     if (redirect) {
-      navigate('/');
+      navigate('/account');
     }
   }, [redirect, navigate]);
 

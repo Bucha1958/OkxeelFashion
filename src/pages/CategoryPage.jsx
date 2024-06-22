@@ -15,21 +15,21 @@ const CategoryPage = () => {
 
   const renderCategoryPage = (categoryName) => {
     switch (categoryName) {
-      case 'Suits':
+      case 'suits':
         return <SuitsPage />;
-      case 'Shirts':
+      case 'shirts':
         return <ShirtsPage />;
-      case 'Trousers':
+      case 'trousers':
         return <TrouserPage />;
-      case 'Blazers':
+      case 'blazers':
         return <BlazersPage />;
-      case 'Natives':
+      case 'natives':
         return <NativesPage />;
-      case 'Caps':
+      case 'caps':
         return <CapPage />;
-      case 'Shorts':
+      case 'shorts':
         return <ShortsPage />;
-      case 'Coat':
+      case 'coat':
         return <CoatPage />;
       default:
         return <div>Category not found</div>;

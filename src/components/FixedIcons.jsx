@@ -31,18 +31,9 @@ const FixedIcons = ({ scrolled }) => {
     }
   };
 
+  
   useEffect(() => {
-
-    fetch('http://localhost:3000/api/profile', {
-      credentials: 'include',
-    })
-      .then(response => response.json())
-      .then(userInfo => {
-        setUserInfo(userInfo);
-      })
-      .catch(error => {
-        console.error("Error fetching user info:", error);
-      });
+    console.log("FixedIcons from context userInfo:", userInfo);
 
     if (iconDropMenu) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -82,23 +73,14 @@ const FixedIcons = ({ scrolled }) => {
             <div className="absolute right-[-120px] mt-4 w-48 flex flex-col space-y-6 font-sm font-semibold bg-white text-black rounded-lg shadow-lg transition-transform duration-300 transform translate-y-0 opacity-100"
               ref={dropdownRef}
             >
-              {/* {user ? (
-                <ul className="py-6">
-                  <li className="px-4 py-2 hover:bg-gray-200 hover:cursor-pointer"><a onClick={Logout}>LOGOUT</a></li>
-                  <li className="px-4 py-2 hover:bg-gray-200"><a href="#">ACCOUNT SETTINGS</a></li>
-                  <li className="px-4 py-2 hover:bg-gray-200"><a href="#">SAVED ITEMS</a></li>
-                  <li className="px-4 py-2 hover:bg-gray-200"><a href="#">MY APPOINTMENTS</a></li>
-                </ul>
-              ) : (
-                <ul className="py-6">
-                  <li className="px-4 py-2 hover:bg-gray-200"><Link to="/register">SIGN UP</Link></li>
-                  <li className="px-4 py-2 hover:bg-gray-200"><Link to="/login">LOGIN</Link></li>
-                </ul>
-              )} */}
               {user ? (
                 <ul className="py-6 text-sm">
                   <li className="px-4 py-2 hover:bg-gray-200 hover:cursor-pointer">
-                    <FontAwesomeIcon icon={FaShopingCart} className="mr-2" />
+                    <FontAwesomeIcon icon={faUser} className="mr-2" />
+                    <Link to='/account'>MY ACCOUNT</Link>
+                  </li>
+                  <li className="px-4 py-2 hover:bg-gray-200 hover:cursor-pointer">
+                    <FontAwesomeIcon icon={faShoppingCart} className="mr-2" />
                     <a onClick={Logout}>MY ORDER</a>
                   </li>
                   <li className="px-4 py-2 hover:bg-gray-200">

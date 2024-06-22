@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import FixedIcons from './FixedIcons';
+import ThreeIcons from './ThreeIcons'
 import '../Hero.css';
-import ThreeIcons from './ThreeIcons';
 import SidebarContact from './SidebarContact';
 
 export const Head = () => {

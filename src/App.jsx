@@ -6,6 +6,8 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import FAQ from "./pages/FAQ";
 import CategoryPage from "./pages/CategoryPage";
+import AccountPage from "./pages/AccountPage";
+import ProductPage from "./pages/ProductPage";
 
 const App = () => {
   return (
@@ -17,6 +19,8 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/frequently_asked_questions" element={<FAQ />} />
           <Route path="/category/:name" element={<CategoryPage />} />
+          <Route path="/account" element={<AccountPage />} />
+          <Route path="/products" element={<ProductPage />} />
         </Routes>
       </Router>
     </UserContextProvider>

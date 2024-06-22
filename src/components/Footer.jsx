@@ -6,7 +6,7 @@ import FAQ from '../pages/FAQ';
 
 const Footer = () => {
     return (
-        <footer className="bg-black text-slate-300 py-[50px] mt-10">
+        <footer className="bg-black text-slate-300 py-[50px]">
             <div className="container mx-auto px-4">
                 <div className="flex flex-wrap justify-between">
                     {/* Column 1: Customer Service */}
