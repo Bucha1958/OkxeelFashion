@@ -1,15 +1,26 @@
+
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { UserContext } from "../UserContext";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faUser, faSearch, faBars, faSignOutAlt, faCog, faBookmark, faCalendarAlt, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faPlus, faUser, faSearch, faBars, faSignOutAlt, faCog, faBookmark, faCalendarAlt, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from './Sidebar';
 import '../Hero.css';
+import ProductCreationModal from './modals/ProductCreationModal';
 
 const FixedIcons = ({ scrolled }) => {
   const { userInfo, setUserInfo } = useContext(UserContext);
   const [iconDropMenu, setIconDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   const dropdownRef = useRef(null);
   const userIconRef = useRef(null);
@@ -32,8 +43,8 @@ const FixedIcons = ({ scrolled }) => {
   };
 
   
+
   useEffect(() => {
-    console.log("FixedIcons from context userInfo:", userInfo);
 
     if (iconDropMenu) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -49,6 +60,24 @@ const FixedIcons = ({ scrolled }) => {
     };
   }, [iconDropMenu, setUserInfo]);
 
+  
+
+   const handleSubmitProduct = async (formData) => {
+    const response = await fetch('http://localhost:3000/api/products', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create product');
+    }
+
+    const data = await response.json();
+    console.log('Product Created:', data);
+  };
+
+  
+    
   const Logout = () => {
     fetch('http://localhost:3000/api/logout', {
       credentials: 'include',
@@ -74,7 +103,7 @@ const FixedIcons = ({ scrolled }) => {
               ref={dropdownRef}
             >
               {user ? (
-                <ul className="py-6 text-sm">
+                <ul className="py-6 text-xxs text-black montserrat-one font-semibold">
                   <li className="px-4 py-2 hover:bg-gray-200 hover:cursor-pointer">
                     <FontAwesomeIcon icon={faUser} className="mr-2" />
                     <Link to='/account'>MY ACCOUNT</Link>
@@ -95,38 +124,48 @@ const FixedIcons = ({ scrolled }) => {
                     <FontAwesomeIcon icon={faCalendarAlt} className="mr-2" />
                     <a href="#">MY APPOINTMENTS</a>
                   </li>
-                  <li className="px-4 py-2 hover:bg-gray-200 hover:cursor-pointer">
+                  <div className='px-4 py-2 hover:bg-gray-200 hover:cursor-pointer'>
+                    <button
+                      onClick={handleOpenModal}
+                    >
+                    <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                        CREATE PRODUCT
+                    </button>
+                  </div>
+                  
+                  <li className="px-4 py-2 hover:bg-gray-200">
                     <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
-                    <a onClick={Logout}>LOGOUT</a>
+                    <a href="#" onClick={Logout}>LOG OUT</a>
                   </li>
                 </ul>
               ) : (
-                <ul className="py-6 text-sm">
+                <ul className="py-6 text-black text-xxs montserrat-one font-normal">
                   <li className="px-4 py-2 hover:bg-gray-200">
                     <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
-                    <Link to="/register">SIGN UP</Link>
+                    <Link to='/register'>REGISTER</Link>
                   </li>
                   <li className="px-4 py-2 hover:bg-gray-200">
                     <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
-                    <Link to="/login">LOGIN</Link>
+                    <Link to='/login'>LOGIN</Link>
                   </li>
                 </ul>
               )}
             </div>
           )}
         </div>
-        <FontAwesomeIcon icon={faSearch} />
+        <FontAwesomeIcon icon={faSearch} className='cursor-pointer' />
         <FontAwesomeIcon icon={faBars} className='cursor-pointer' onClick={toggleSidebar} />
       </div>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
-          onClick={toggleSidebar}
-        />
-      )}
+       {sidebarOpen && (
+         <div
+           className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
+           onClick={toggleSidebar}
+         />
+       )}
+      <ProductCreationModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitProduct} />
     </>
   );
-};
+}
 
 export default FixedIcons;

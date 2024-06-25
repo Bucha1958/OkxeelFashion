@@ -186,8 +186,7 @@ const Register = () => {
                 disabled={isLoading}
                 className="bg-black text-white font-semibold text-sm py-4 px-10 focus:outline-none focus:shadow-outline hover:bg-gray-700"
               >
-                {isLoading && <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />}
-                Register
+                {isLoading ? <FontAwesomeIcon icon={faSpinner} spin className="mr-2" /> : 'Register'}
               </button>
               <Link to="/login" className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
                 Already have an account?

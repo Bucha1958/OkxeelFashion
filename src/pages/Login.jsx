@@ -140,8 +140,7 @@ const Login = () => {
                 disabled={isLoading}
                 className="bg-black text-white font-semibold text-sm py-4 px-12 focus:outline-none focus:shadow-outline hover:bg-gray-700"
               >
-                {isLoading && <FontAwesomeIcon icon={faSpinner} spin className="mr-2" />}
-                Login
+                {isLoading ? <FontAwesomeIcon icon={faSpinner} spin className="mr-2" /> : 'Login'}
               </button>
             </div>
           </form>
