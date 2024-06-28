@@ -1,42 +1,24 @@
 // src/pages/CategoryPage.jsx
-import React from 'react';
+
+
+import React, { lazy, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
-import SuitsPage from './SuitsPage';
-import ShirtsPage from './ShirtsPage';
-import TrouserPage from './TrouserPage';
-import BlazersPage from './BlazersPage';
-import NativesPage from './NativesPage';
-import CapPage from './CapPage';
-import ShortsPage from './ShortsPage';
-import CoatPage from './CoatPage';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
+const CategoryTemplate = lazy(() => import('./CategoryTemplate'));
 
 const CategoryPage = () => {
   const { name } = useParams();
 
-  const renderCategoryPage = (categoryName) => {
-    switch (categoryName) {
-      case 'suits':
-        return <SuitsPage />;
-      case 'shirts':
-        return <ShirtsPage />;
-      case 'trousers':
-        return <TrouserPage />;
-      case 'blazers':
-        return <BlazersPage />;
-      case 'natives':
-        return <NativesPage />;
-      case 'caps':
-        return <CapPage />;
-      case 'shorts':
-        return <ShortsPage />;
-      case 'coat':
-        return <CoatPage />;
-      default:
-        return <div>Category not found</div>;
-    }
-  };
-
-  return <div>{renderCategoryPage(name)}</div>;
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <i className="fas fa-circle-notch fa-spin text-4xl"></i>
+      </div>
+    }>
+      <CategoryTemplate categoryName={name} />
+    </Suspense>
+  );
 };
 
 export default CategoryPage;

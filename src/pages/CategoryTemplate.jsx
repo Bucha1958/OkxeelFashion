@@ -1,48 +1,59 @@
-// src/pages/ProductPage.jsx
+// src/pages/CategoryTemplate.jsx
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import Head from '../components/Head';
 import Product from '../components/Product';
 import Footer from '../components/Footer';
 
 
-const ProductPage = () => {
+const CategoryTemplate = () => {
+  const { name } = useParams();
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
 
-
   useEffect(() => {
-    // Fetch products from API
-    fetch('http://localhost:3000/api/products', {
-      credentials: 'include',
-    })
-      .then(response => response.json())
-      .then(data => {
-        setProducts(data);
-      })
-      .catch(error => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/products?category=${name}`, {
+          credentials: 'include',
+        });
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else {
+          console.error('API response is not an array:', data);
+          setProducts([]);
+        }
+      } catch (error) {
         console.error('Error fetching products:', error);
-      });
-  }, []);
+        setProducts([]);
+      }
+    };
 
+    fetchProducts();
+  }, [name]);
 
   // Calculate the products for the current page
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = Array.isArray(products) ? products.slice(indexOfFirstProduct, indexOfLastProduct) : [];
 
   // Handle pagination
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
+      <Head />
       <div className="container mx-auto px-2 py-8 mb-20">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-        {currentProducts.map(product => (
-          <Product key={product.id} product={product} />
+      <h1 className="text-2xl font-bold mb-4 capitalize">{name} Products</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {currentProducts.map((product) => (
+          <Product key={product._id} product={product} />
         ))}
       </div>
       {products.length > productsPerPage && (
-        <div className="mt-20 flex justify-center">
+        <div className="mt-8 flex justify-center">
           {Array.from({ length: Math.ceil(products.length / productsPerPage) }, (_, index) => (
             <button
               key={index + 1}
@@ -54,12 +65,11 @@ const ProductPage = () => {
           ))}
         </div>
       )}
-      
-      </div>
-      <Footer />
+     </div>
+     <Footer />
     </>
     
   );
 };
 
-export default ProductPage;
+export default CategoryTemplate;

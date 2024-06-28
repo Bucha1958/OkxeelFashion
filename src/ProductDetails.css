@@ -1,0 +1,18 @@
+.zoom-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .zoom-image {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .zoom-container:hover .zoom-image {
+    transform: scale(2); /* Adjust the scale as needed */
+    cursor: zoom-in;
+  }
+  
+  .zoom-container:hover {
+    cursor: zoom-in;
+  }
+  

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { UserContext } from "../UserContext";
+import { CartContext } from '../CartContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faPlus, faUser, faSearch, faBars, faSignOutAlt, faCog, faBookmark, faCalendarAlt, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from './Sidebar';
@@ -10,6 +11,7 @@ import ProductCreationModal from './modals/ProductCreationModal';
 
 const FixedIcons = ({ scrolled }) => {
   const { userInfo, setUserInfo } = useContext(UserContext);
+  const { cartItems } = useContext(CartContext);
   const [iconDropMenu, setIconDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,7 +65,7 @@ const FixedIcons = ({ scrolled }) => {
   
 
    const handleSubmitProduct = async (formData) => {
-    const response = await fetch('http://localhost:3000/api/products', {
+    const response = await fetch('http://localhost:3000/api/product', {
       method: 'POST',
       body: formData,
     });
@@ -92,6 +94,7 @@ const FixedIcons = ({ scrolled }) => {
   }
 
   const user = userInfo?.email;
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <>
@@ -153,7 +156,17 @@ const FixedIcons = ({ scrolled }) => {
             </div>
           )}
         </div>
-        <FontAwesomeIcon icon={faSearch} className='cursor-pointer' />
+        <FontAwesomeIcon icon={faSearch} className='cursor-pointer mt-1' />
+        {user && (
+          <Link to='/cart' className='relative'>
+            <FontAwesomeIcon icon={faShoppingCart} className='cursor-pointer' />
+            {cartItemCount > 0 && (
+              <span className='mr-3 absolute top-0 right-0 inline-block w-4 h-4 text-center text-white text-xs bg-red-600 rounded-full'>
+                {cartItemCount}
+              </span>
+            )}
+          </Link>
+        )}
         <FontAwesomeIcon icon={faBars} className='cursor-pointer' onClick={toggleSidebar} />
       </div>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />

@@ -37,7 +37,7 @@ const WhatsappPopUp = () => {
       {showPopup && (
         <div className="fixed bottom-4 right-4 p-4 bg-white rounded-lg shadow-lg flex items-center space-x-3">
           <a 
-            href="https://wa.me/yourwhatsappnumber" 
+            href="https://wa.me/08028612600" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center space-x-2"

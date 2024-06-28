@@ -1,17 +1,30 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faUser, faSearch, faBars, faSignOutAlt, faCog, faBookmark, faCalendarAlt, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faUser, faPlus, faSearch, faBars, faSignOutAlt, faCog, faBookmark, faCalendarAlt, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from './Sidebar';
 import '../Hero.css';
 import { UserContext } from "../UserContext";
+import { CartContext } from '../CartContext';
+import ProductCreationModal from './modals/ProductCreationModal';
+
 
 
 const ThreeIcons = ({ scrolled }) => {
   const navigate = useNavigate();
+  const { cartItems } = useContext(CartContext);
   const { userInfo, setUserInfo } = useContext(UserContext)
   const [iconDropMenu, setIconDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   const dropdownRef = useRef(null);
   const userIconRef = useRef(null);
@@ -48,6 +61,21 @@ const ThreeIcons = ({ scrolled }) => {
     };
   }, [iconDropMenu]);
 
+  const handleSubmitProduct = async (formData) => {
+    const response = await fetch('http://localhost:3000/api/product', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create product');
+    }
+
+    const data = await response.json();
+    console.log('Product Created:', data);
+  };
+
+
   const Logout = () => {
     fetch('http://localhost:3000/api/logout', {
       credentials: 'include',
@@ -62,8 +90,9 @@ const ThreeIcons = ({ scrolled }) => {
       });
   }
 
-  console.log('from threeIcons',userInfo)
+
   const user = userInfo?.email
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <>
@@ -92,6 +121,14 @@ const ThreeIcons = ({ scrolled }) => {
                     <FontAwesomeIcon icon={faCalendarAlt} className="mr-2" />
                     <a href="#">MY APPOINTMENTS</a>
                   </li>
+                  <div className='px-4 py-2 hover:bg-gray-200 hover:cursor-pointer'>
+                    <button
+                      onClick={handleOpenModal}
+                    >
+                    <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                        CREATE PRODUCT
+                    </button>
+                  </div>
                   <li className="px-4 py-2 hover:bg-gray-200 hover:cursor-pointer">
                     <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
                     <a onClick={Logout}>LOGOUT</a>
@@ -113,6 +150,16 @@ const ThreeIcons = ({ scrolled }) => {
           )}
         </div>
         <FontAwesomeIcon icon={faSearch} />
+        {user && (
+          <Link to='/cart' className='relative'>
+            <FontAwesomeIcon icon={faShoppingCart} className='cursor-pointer' />
+            {cartItemCount > 0 && (
+              <span className='mr-3 absolute top-0 right-0 inline-block w-4 h-4 text-center text-white text-xs bg-red-600 rounded-full'>
+                {cartItemCount}
+              </span>
+            )}
+          </Link>
+        )}
         <FontAwesomeIcon icon={faBars} className='cursor-pointer' onClick={toggleSidebar} />
       </div>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
@@ -122,6 +169,7 @@ const ThreeIcons = ({ scrolled }) => {
           onClick={toggleSidebar}
         />
       )}
+      <ProductCreationModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitProduct} />
     </>
   );
 };

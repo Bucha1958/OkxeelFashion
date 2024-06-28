@@ -13,6 +13,7 @@ import BlogPosts from '../components/Blogposts';
 import Footer from '../components/Footer';
 import LocationMap from '../components/LocationMap';
 import WhatsAppPopup from '../components/WhatsappPopUp';
+import Products from '../components/Products';
 
 const HomePage = () => {
   const images = [yellowKaftan2, okxeel1, okxeel2, whitekaf, chocolate];
@@ -50,7 +51,7 @@ const HomePage = () => {
         <Header />
         <Hero />
       </div>
-      <Categories />
+      <Products />
       <Shop />
       <LocationMap />
       <BlogPosts />

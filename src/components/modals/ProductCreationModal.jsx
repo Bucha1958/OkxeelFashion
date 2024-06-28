@@ -15,7 +15,6 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
   const [imageNames, setImageNames] = useState([]);
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
-  const [imageError, setImageError] = useState('');
 
   // Fetch categories when the component mounts
   useEffect(() => {
@@ -34,31 +33,11 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    const validExtensions = ['image/jpeg', 'image/png', 'image/jpg'];
-    const validFiles = [];
-    let invalidFileFound = false;
+    setImages((prevImages) => [...prevImages, ...files]);
 
-    files.forEach(file => {
-      if (!validExtensions.includes(file.type)) {
-        invalidFileFound = true;
-      } else {
-        validFiles.push(file);
-      }
-    });
-
-    if (invalidFileFound) {
-      setImageError('Only jpg, jpeg, and png files are allowed.');
-    } else {
-      setImageError('');
-    }
-
-    if (validFiles.length > 0) {
-      setImages((prevImages) => [...prevImages, ...validFiles]);
-
-      // Store image names
-      const names = validFiles.map((file) => file.name);
-      setImageNames((prevNames) => [...prevNames, ...names]);
-    }
+    // Store image names
+    const names = files.map((file) => file.name);
+    setImageNames((prevNames) => [...prevNames, ...names]);
   };
 
   const handleRemoveImage = (index) => {
@@ -105,7 +84,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
       setImages([]);
       setImageNames([]);
       onClose();
-      setRedirect(true);
+      setRedirect(category);
     } catch (error) {
       console.error('Error creating product:', error);
     } finally {
@@ -115,7 +94,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
 
   useEffect(() => {
     if (redirect) {
-      navigate('/product');
+      navigate(`/category/${redirect}`);
     }
   }, [redirect, navigate]);
 
@@ -139,7 +118,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus-visible:ring-0 text-black placeholder-gray-600 ${errors.name ? 'border-red-500' : ''}`}
+              className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus:outline-none focus:ring-0 text-black placeholder-gray-600 ${errors.name ? 'border-red-500' : ''}`}
               required
             />
             {errors.name && <span className="text-red-500 text-xxs">{errors.name}</span>}
@@ -150,7 +129,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
               type="number"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus-visible:ring-0 text-black ${errors.price ? 'border-red-500' : ''}`}
+              className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus:outline-none focus:ring-0 text-black ${errors.price ? 'border-red-500' : ''}`}
               required
             />
             {errors.price && <span className="text-red-500 text-xxs">{errors.price}</span>}
@@ -160,12 +139,12 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus-visible:ring-0 text-black ${errors.category ? 'border-red-500' : ''}`}
+              className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus:outline-none focus:ring-0 text-black ${errors.category ? 'border-red-500' : ''}`}
               required
             >
               <option value="">Select a category</option>
               {categories.map((cat) => (
-                <option key={cat.id} value={cat.name}>
+                <option key={cat._id} value={cat.name}>
                   {cat.name}
                 </option>
               ))}
@@ -178,13 +157,13 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
               type="file"
               name="images"
               multiple
+              accept=".jpg,.jpeg,.png" // Allow only jpg, jpeg, and png extensions
               onChange={handleImageUpload}
-              className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus-visible:ring-0 text-black ${errors.images ? 'border-red-500' : ''}`}
+              className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus:outline-none focus:ring-0 text-black ${errors.images ? 'border-red-500' : ''}`}
             />
-            {imageError && <span className="text-red-500 text-xxs">{imageError}</span>}
             <div className="mt-2">
               {imageNames.map((name, index) => (
-                <div key={index} className="flex items-center justify-between mb-2">
+                <div key={index} className="flex items-center mb-2">
                   <span className="text-xs text-gray-700">{name}</span>
                   <button
                     type="button"
