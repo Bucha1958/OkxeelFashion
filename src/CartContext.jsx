@@ -7,7 +7,7 @@ export const useCart = () => useContext(CartContext);
 export function CartContextProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
-  const addToCart = (product, quantity) => {
+  const addToCart = (product, quantity, sizeOrcustomSizes) => {
     console.log('Adding to cart in context...');
     console.log('Product:', product);
     console.log('Quantity:', quantity);
@@ -22,7 +22,7 @@ export function CartContextProvider({ children }) {
         console.log('Updated cart items:', updatedItems);
         return updatedItems;  
       } else {
-        const newItems = [...prevItems, { product, quantity }];
+        const newItems = [...prevItems, { product, quantity, sizeOrcustomSizes }];
         console.log('New cart items:', newItems);
         return newItems;
       }

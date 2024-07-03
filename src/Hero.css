@@ -40,10 +40,6 @@
   
   .montserrat {
     font-family: "Montserrat", sans-serif;
-    /* font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-    color: black; */
   }
 
 @keyframes slideInFromRight {
@@ -136,4 +132,14 @@
   scrollbar-width: none;  /* Firefox */
 }
 
-  
+.translate-y-0 {
+  transform: translateY(0);
+}
+
+.-translate-y-full {
+  transform: translateY(-100%);
+}
+
+.transition-transform {
+  transition: transform 0.5s ease-in-out;
+}

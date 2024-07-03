@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const SidebarContact = ({ isOpen, toggleSidebar }) => {
   return (
-    <div className={`fixed top-0 right-0 h-full w-5/12 bg-white z-30 text-black transition-transform transform duration-700 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+    <div className={`fixed top-0 right-0 h-full w-5/12 bg-white z-30 text-black transition-transform transform duration-700 ${isOpen ? 'translate-x-0' : 'translate-x-full'} w-full md:w-full lg:w-5/12`}>
       <button className="absolute top-4 right-4 text-2xl" onClick={toggleSidebar}>
         &times;
       </button>

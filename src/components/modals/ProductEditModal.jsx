@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import '../../Hero.css';
 
-const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
+const ProductEditModal = ({ isOpen, onClose, onSubmit, product }) => {
   const navigate = useNavigate();
   const [redirect, setRedirect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +15,16 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
   const [imageNames, setImageNames] = useState([]);
   const [categories, setCategories] = useState([]);
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (product) {
+      setName(product.name);
+      setPrice(product.price);
+      setCategory(product.categories[0]?.name || ''); // Assuming categories is an array and you want the first one
+      setImages(product.images);
+      setImageNames(product.images.map((img) => img.split('/').pop()));
+    }
+  }, [product]);
 
   // Fetch categories when the component mounts
   useEffect(() => {
@@ -45,23 +55,12 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
     setImageNames((prevNames) => prevNames.filter((_, i) => i !== index));
   };
 
-  const validate = () => {
-    const newErrors = {};
-    if (!name) newErrors.name = 'Name is required';
-    if (!price) newErrors.price = 'Price is required';
-    if (!category) newErrors.category = 'Category is required';
-    if (images.length === 0) newErrors.images = 'At least one image is required';
-    return newErrors;
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newErrors = validate();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+  
 
     setIsLoading(true);
 
@@ -71,22 +70,21 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
     formData.append('categories', JSON.stringify([category]));
 
     images.forEach((image) => {
-      formData.append('images', image); 
+      if (typeof image === 'string') {
+        formData.append('existingImages', image); // handle existing images differently
+      } else {
+        formData.append('images', image);
+      }
     });
 
     try {
       console.log('Submitting form data...', formData);
       await onSubmit(formData);
       console.log('Product submitted successfully');
-      setName('');
-      setPrice('');
-      setCategory('');
-      setImages([]);
-      setImageNames([]);
       onClose();
       setRedirect(category);
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error('Error updating product:', error);
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +99,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-600 bg-opacity-50">
       <div className="bg-white p-8 rounded shadow-lg w-full max-w-md text-black text-xxs">
         <div className='flex justify-end'>
           <button className="text-2xl font-semibold" onClick={onClose}>
@@ -109,7 +107,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
           </button>
         </div>
         <div className='flex justify-center items-center'>
-          <h2 className="text-medium text-black font-bold mb-4 uppercase">Create Product</h2>
+          <h2 className="text-medium text-black font-bold mb-4 uppercase">Edit Product</h2>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -119,20 +117,20 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus:outline-none focus:ring-0 text-black placeholder-gray-600 ${errors.name ? 'border-red-500' : ''}`}
-              required
+              
             />
-            {errors.name && <span className="text-red-500 text-xxs">{errors.name}</span>}
+            
           </div>
           <div className="mb-4">
-            <label className="block text-xxs font-semibold mb-2">Price ($)</label>
+            <label className="block text-xxs font-semibold mb-2">Price</label>
             <input
               type="number"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus:outline-none focus:ring-0 text-black ${errors.price ? 'border-red-500' : ''}`}
-              required
+              
             />
-            {errors.price && <span className="text-red-500 text-xxs">{errors.price}</span>}
+            
           </div>
           <div className="mb-4">
             <label className="block text-xxs font-semibold mb-2">Category</label>
@@ -140,7 +138,6 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus:outline-none focus:ring-0 text-black ${errors.category ? 'border-red-500' : ''}`}
-              required
             >
               <option value="">Select a category</option>
               {categories.map((cat) => (
@@ -149,7 +146,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
                 </option>
               ))}
             </select>
-            {errors.category && <span className="text-red-500 text-xxs">{errors.category}</span>}
+            
           </div>
           <div className="mb-4">
             <label className="block text-xxs font-semibold mb-2">Images</label>
@@ -157,7 +154,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
               type="file"
               name="images"
               multiple
-              accept=".jpg,.jpeg,.png" // Allow only jpg, jpeg, and png extensions
+              accept=".jpg,.jpeg,.png"
               onChange={handleImageUpload}
               className={`w-full p-2 rounded bg-zinc-300/50 border-0 focus:outline-none focus:ring-0 text-black ${errors.images ? 'border-red-500' : ''}`}
             />
@@ -175,7 +172,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
                 </div>
               ))}
             </div>
-            {errors.images && <span className="text-red-500 text-xxs">{errors.images}</span>}
+            
           </div>
           <div className="flex justify-end">
             <button
@@ -183,7 +180,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
               className="px-4 py-2 bg-blue-500 text-white rounded"
               disabled={isLoading}
             >
-              {isLoading ? <FontAwesomeIcon icon={faSpinner} spin className="mr-2" /> : 'Create'}
+              {isLoading ? <FontAwesomeIcon icon={faSpinner} spin className="mr-2" /> : 'Update'}
             </button>
           </div>
         </form>
@@ -192,6 +189,4 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
   );
 };
 
-export default ProductCreationModal;
-
-//
+export default ProductEditModal;

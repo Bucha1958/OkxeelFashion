@@ -2,19 +2,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faPlus, faMinus, faEdit, faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useCart } from '../CartContext';
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import Head from '../components/Head';
 import Footer from '../components/Footer';
-import '../ProductDetails.css';
+import ProductEditModal from '../components/modals/ProductEditModal';
+import DeleteProductModal from '../components/modals/DeleteProductModal';
+import { useExchangeRate } from '../ExchangeRateContext';
 
-const ProductDetail = () => {
-  const navigate = useNavigate(); 
+const ProductDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
+  const { addToCart, cartItems } = useCart();
+  const { formatPrice, currency } = useExchangeRate();
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
   const [size, setSize] = useState('');
+  const [hoveredSize, setHoveredSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [customSizes, setCustomSizes] = useState({
     neck: '',
@@ -22,19 +26,19 @@ const ProductDetail = () => {
     sleeveLength: '',
     bicep: '',
     chest: '',
-    tommy:'',
+    tommy: '',
     shirtLength: '',
     waist: '',
     thigh: '',
     hip: '',
     knee: '',
-    ankle: '',
-    trouserlength: ''
+    ankle: ''
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const zoomRef = useRef(null);
   const imageRef = useRef(null);
-  const { addToCart, cartItems } = useCart();
 
   useEffect(() => {
     // Fetch product details from API
@@ -51,6 +55,61 @@ const ProductDetail = () => {
       .catch(error => console.error('Error fetching product:', error));
   }, [id]);
 
+  const handleSubmitProduct = async (formData) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/products/${id}`, {
+        method: 'PUT',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error Response:', errorData);
+        throw new Error(`Failed to update product: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Product Updated:', data);
+    } catch (error) {
+      console.error('Error updating product:', error.message);
+    }
+  };
+
+  const deleteProduct = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/products/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error Response:', errorData);
+        throw new Error(`Failed to delete product: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Product Deleted:', data);
+    } catch (error) {
+      console.error('Error deleting product:', error.message);
+    }
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleOpenDeleteModal = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+  };
+
   const handleSizeChange = (e) => {
     setSize(e.target.value);
   };
@@ -62,22 +121,26 @@ const ProductDetail = () => {
     });
   };
 
+  const requiredCustomSizes = ['chest', 'shoulder', 'sleeveLength', 'shirtLength', 'waist', 'thigh', 'trouserLength'];
 
-  const requiredCustomSizes = ['chest', 'shoulder', 'sleeveLength', 'shirtLength', 'waist', 'thigh', 'trouserLength']
+  requiredCustomSizes.forEach(key => {
+    if (!customSizes.hasOwnProperty(key)) {
+      customSizes[key] = '';
+    }
+  });
+
   const allRequiredCustomSizesFilled = requiredCustomSizes.every(key => customSizes[key].trim() !== '');
 
   const addToCartButtonClass = (!size && !allRequiredCustomSizesFilled) ? 'cursor-not-allowed' : 'cursor-pointer';
-  
+
   const handleAddToCart = () => {
     if (!allRequiredCustomSizesFilled && !size) {
-      alert('chest, shoulder, sleeveLength, shirtLength, waist, thigh, trouserLength are required or predefined size')
+      alert('Please fill all required measurements or select a size.');
       return;
-    } 
+    }
 
-    console.log('Adding to cart...');
-    addToCart(product, quantity);
+    addToCart(product, quantity, size || customSizes);
     console.log('Cart items:', cartItems);
-    // Navigate to cart page to check
     navigate('/cart');
   };
 
@@ -96,20 +159,61 @@ const ProductDetail = () => {
     setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   };
 
+  const sizeMeasurements = {
+    XS: {
+      neck: '13-14',
+      shoulder: '14-15',
+      sleeveLength: '30-31',
+      bicep: '11-12',
+      chest: '32-34',
+      tommy: '28-30',
+      shirtLength: '27-28',
+      waist: '26-28',
+      thigh: '18-19',
+      hip: '32-34',
+      knee: '14-15',
+      ankle: '8-9',
+      trouserLength: '38-39'
+    },
+    S: {
+      neck: '14-15',
+      shoulder: '15-16',
+      sleeveLength: '31-32',
+      bicep: '12-13',
+      chest: '34-36',
+      tommy: '30-32',
+      shirtLength: '28-29',
+      waist: '28-30',
+      thigh: '19-20',
+      hip: '34-36',
+      knee: '15-16',
+      ankle: '9-10',
+      trouserLength: '39-40'
+    },
+    // Add measurements for other sizes...
+  };
+
+  const handleMouseEnter = (size) => {
+    setHoveredSize(size);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredSize(null);
+  };
+
   if (!product) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <i className="fas fa-circle-notch fa-spin text-4xl"></i>
+      <div className="flex justify-center items-center h-screen">
+        <FontAwesomeIcon icon={faSpinner} spin size="3x" />
       </div>
     );
   }
 
-
   return (
-    <>
+    <div className="overflow-x-hidden">
       <Head />
-      <div className="container mx-auto px-2 py-8 flex mt-20 font-poppins">
-        <div className="w-1/2">
+      <div className="container mx-auto px-4 sm:px-8 py-8 flex flex-wrap mt-20 font-poppins max-w-full">
+        <div className="w-full sm:w-1/2 mb-8 sm:mb-0">
           <div className="mb-4 zoom-container" ref={zoomRef} onMouseMove={handleMouseMove}>
             <img ref={imageRef} src={selectedImage} alt={product.name} className="w-full h-auto zoom-image" />
           </div>
@@ -125,20 +229,59 @@ const ProductDetail = () => {
             ))}
           </div>
         </div>
-        <div className="w-1/2 pl-8">
+        <div className="w-full sm:w-1/2 pl-0 sm:pl-8">
           <h1 className="text-2xl font-bold mb-4 uppercase">{product.name}</h1>
-          <p className="mb-4">Price: ${product.price}</p>
-          <div className="mb-4">
-            <select id="size" value={size} onChange={handleSizeChange} className="w-full text-sm h-[35px] p-2 rounded bg-zinc-300/50 border-0 focus-visible:ring-0 text-black placeholder-gray-600">
-              <option value="">Select size</option>
-              <option value="XS">XS</option>
-              <option value="S">S</option>
-              <option value="M">M</option>
-              <option value="L">L</option>
-              <option value="XL">XL</option>
-              <option value="XXL">XXL</option>
-              <option value="XXXL">XXXL</option>
-            </select>
+          <p className="mb-4">Price: {formatPrice(product.price)}</p>
+          <div className="flex space-x-4">
+            <FontAwesomeIcon
+              icon={faEdit}
+              className="text-sm cursor-pointer text-gray-600 hover:text-gray-300"
+              onClick={handleOpenModal}
+            />
+            <FontAwesomeIcon
+              icon={faTrash}
+              className="text-sm cursor-pointer text-gray-600 hover:text-red-500"
+              onClick={handleOpenDeleteModal}
+            />
+          </div>
+          <div className="mb-4 relative">
+            <div className="w-full text-sm h-[35px] p-2 rounded border-0 focus-visible:ring-0 text-black placeholder-gray-600 relative">
+              <select
+                id="size"
+                value={size}
+                onChange={handleSizeChange}
+                className="w-full h-full bg-zinc-300/100 cursor-pointer relative focus:outline-none focus:ring-0"
+                onMouseEnter={() => handleMouseEnter(size)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <option value="">Select size</option>
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+                <option value="XXXL">XXXL</option>
+              </select>
+              {hoveredSize && (
+                <div className="absolute left-0 top-full mt-2 p-2 bg-white shadow-lg border rounded z-20">
+                  <p>Size: {hoveredSize}</p>
+                  <p>Neck: {sizeMeasurements[hoveredSize]?.neck}</p>
+                  <p>Shoulder: {sizeMeasurements[hoveredSize]?.shoulder}</p>
+                  <p>Sleeve Length: {sizeMeasurements[hoveredSize]?.sleeveLength}</p>
+                  <p>Bicep: {sizeMeasurements[hoveredSize]?.bicep}</p>
+                  <p>Chest: {sizeMeasurements[hoveredSize]?.chest}</p>
+                  <p>Tommy: {sizeMeasurements[hoveredSize]?.tommy}</p>
+                  <p>Shirt Length: {sizeMeasurements[hoveredSize]?.shirtLength}</p>
+                  <p>Waist: {sizeMeasurements[hoveredSize]?.waist}</p>
+                  <p>Thigh: {sizeMeasurements[hoveredSize]?.thigh}</p>
+                  <p>Hip: {sizeMeasurements[hoveredSize]?.hip}</p>
+                  <p>Knee: {sizeMeasurements[hoveredSize]?.knee}</p>
+                  <p>Ankle: {sizeMeasurements[hoveredSize]?.ankle}</p>
+                  <p>Trouser Length: {sizeMeasurements[hoveredSize]?.trouserLength}</p>
+                </div>
+              )}
+            </div>
           </div>
           <div className="mb-4">
             <h2 className="text-xl font-bold mb-2 uppercase">Manually enter your measurements:</h2>
@@ -156,35 +299,36 @@ const ProductDetail = () => {
               </div>
             ))}
           </div>
-          <div className='flex px-8 h-[60px] mt-20'>
-            <div className="mb-4 flex items-center py-4 px-4 mt-4">
-              <button onClick={decrementQuantity} className="h-[60px] w-[60px] bg-gray-300 text-gray-700 px-3 py-1 rounded-l">
+          <div className='flex items-center mb-4'>
+            <div className="flex items-center">
+              <button onClick={decrementQuantity} className="h-[40px] w-[40px] bg-gray-300 text-gray-700 px-3 py-1 rounded-l">
                 <FontAwesomeIcon icon={faMinus} />
               </button>
               <input
                 type="text"
                 value={quantity}
                 readOnly
-                className="text-center w-12 border-t border-b border-gray-300 h-[60px]"
+                className="text-center w-12 border-t border-b border-gray-300 h-[40px]"
               />
-              <button onClick={incrementQuantity} className="h-[60px] w-[60px] bg-gray-300 text-gray-700 px-3 py-1 rounded-r">
+              <button onClick={incrementQuantity} className="h-[40px] w-[40px] bg-gray-300 text-gray-700 px-3 py-1 rounded-r">
                 <FontAwesomeIcon icon={faPlus} />
               </button>
             </div>
-            <button 
-              onClick={handleAddToCart} 
-              className={`bg-blue-500 text-white px-6 py-4 font-poppins ${addToCartButtonClass}`}
+            <button
+              onClick={handleAddToCart}
+              className={`ml-4 bg-blue-500 text-white px-6 py-2 font-poppins ${addToCartButtonClass}`}
             >
               <FontAwesomeIcon icon={faShoppingCart} className="mr-2" />
               Add to Cart
             </button>
           </div>
-          
         </div>
       </div>
+      <ProductEditModal product={product} isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitProduct} />
+      <DeleteProductModal product={product} isOpen={isDeleteModalOpen} onClose={handleCloseDeleteModal} onSubmit={deleteProduct} />
       <Footer />
-    </>
+    </div>
   );
 };
 
-export default ProductDetail;
+export default ProductDetails;

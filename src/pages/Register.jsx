@@ -180,7 +180,7 @@ const Register = () => {
               />
               {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between space-x-5">
               <button
                 type="submit"
                 disabled={isLoading}
@@ -188,7 +188,7 @@ const Register = () => {
               >
                 {isLoading ? <FontAwesomeIcon icon={faSpinner} spin className="mr-2" /> : 'Register'}
               </button>
-              <Link to="/login" className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+              <Link to="/login" className="md:space-x-5 inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
                 Already have an account?
               </Link>
             </div>

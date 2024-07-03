@@ -14,6 +14,7 @@ import Footer from '../components/Footer';
 import LocationMap from '../components/LocationMap';
 import WhatsAppPopup from '../components/WhatsappPopUp';
 import Products from '../components/Products';
+import SidebarContact from '../components/SidebarContact';
 
 const HomePage = () => {
   const images = [yellowKaftan2, okxeel1, okxeel2, whitekaf, chocolate];
@@ -21,7 +22,10 @@ const HomePage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [nextImageIndex, setNextImageIndex] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [initialState, setInitialState] = useState(true);
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   useEffect(() => {
     setInitialState(true); // Set initial state when component mounts
@@ -38,7 +42,7 @@ const HomePage = () => {
   }, [nextImageIndex, images.length]);
 
   return (
-    <div className='App'>
+    <div className='overflow-hidden App'>
       <div className="relative h-full overflow-hidden">
         <div
           className={`absolute inset-0 bg-cover bg-center transition-image ${isTransitioning ? 'transition-active' : ''}`}
@@ -56,7 +60,14 @@ const HomePage = () => {
       <LocationMap />
       <BlogPosts />
       <WhatsAppPopup />
-      <Footer />
+      <Footer toggleSidebar={toggleSidebar}/>
+      <SidebarContact isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
+          onClick={toggleSidebar}
+        />
+      )}
     </div>
   );
 };

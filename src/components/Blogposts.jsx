@@ -29,25 +29,25 @@ const BlogPosts = () => {
 
     return (
         <>
-            <div className='flex flex-col items-center justify-center space-y-10 mt-[224px]'>
-                <h1 className='montserrat-one text-black font-light text-4xl'>OUR BLOG POSTS</h1>
+            <div className='flex flex-col items-center justify-center mt-24'>
+                <h1 className='montserrat-one text-black font-light text-4xl mb-10'>OUR BLOG POSTS</h1>
             </div>
-            <div className="container mt-10">
-                <div className="flex flex-wrap justify-center w-full ml-7">
-                    {displayedPosts.map((post, index) => (
-                        <BlogPost
-                            key={index}
-                            imageUrl={post.imageUrl}
-                            title={post.title}
-                            summary={post.summary}
-                            link={post.link}
-                        />
-                    ))}
+            <div className="container mx-auto px-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {displayedPosts.map((post, index) => (
+                    <BlogPost
+                    key={index}
+                    imageUrl={post.imageUrl}
+                    title={post.title}
+                    summary={post.summary}
+                    link={post.link}
+                    />
+                ))}
                 </div>
                 <div className="text-center mt-8">
-                    <a href="/blog" className="text-blue-500 hover:text-blue-700 text-lg">
-                        See All Blog Posts
-                    </a>
+                <a href="/blog" className="text-blue-500 hover:text-blue-700 text-lg">
+                    See All Blog Posts
+                </a>
                 </div>
             </div>
         </>

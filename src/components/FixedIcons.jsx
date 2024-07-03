@@ -1,11 +1,12 @@
-
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { UserContext } from "../UserContext";
 import { CartContext } from '../CartContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faPlus, faUser, faSearch, faBars, faSignOutAlt, faCog, faBookmark, faCalendarAlt, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { faMoneyBillWave, faShoppingCart, faPlus, faUser, faSearch, faBars, faSignOutAlt, faCog, faBookmark, faCalendarAlt, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from './Sidebar';
+import Search from './Search';  
+import CurrencySelector from './CurrencySelector'; 
 import '../Hero.css';
 import ProductCreationModal from './modals/ProductCreationModal';
 
@@ -15,6 +16,8 @@ const FixedIcons = ({ scrolled }) => {
   const [iconDropMenu, setIconDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);  // State to manage search visibility
+  const [isCurrencySelectorVisible, setIsCurrencySelectorVisible] = useState(false);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -44,8 +47,6 @@ const FixedIcons = ({ scrolled }) => {
     }
   };
 
-  
-
   useEffect(() => {
 
     if (iconDropMenu) {
@@ -62,9 +63,16 @@ const FixedIcons = ({ scrolled }) => {
     };
   }, [iconDropMenu, setUserInfo]);
 
-  
+  // Show the search component
+  const handleSearchClick = () => {
+    setIsSearchVisible(true);  
+  };
 
-   const handleSubmitProduct = async (formData) => {
+  const handleSearchClose = () => {
+    setIsSearchVisible(false);  
+  };
+
+  const handleSubmitProduct = async (formData) => {
     const response = await fetch('http://localhost:3000/api/product', {
       method: 'POST',
       body: formData,
@@ -75,11 +83,9 @@ const FixedIcons = ({ scrolled }) => {
     }
 
     const data = await response.json();
-    console.log('Product Created:', data);
+    console.log('Product Updated:', data);
   };
 
-  
-    
   const Logout = () => {
     fetch('http://localhost:3000/api/logout', {
       credentials: 'include',
@@ -98,11 +104,11 @@ const FixedIcons = ({ scrolled }) => {
 
   return (
     <>
-      <div className={`fixed top-0 right-12 flex justify-end space-x-10 mt-9 ml-15 ${scrolled ? 'text-black' : 'text-white'}`}>
+      <div className={`fixed top-0 right-12 flex justify-end space-x-7 md:space-x-10 mt-9 ml-15 ${scrolled ? 'text-black' : 'text-white'}`}>
         <div className='relative'>
-          <FontAwesomeIcon icon={faUser} className='cursor-pointer' ref={userIconRef} onClick={toggleDropDown} />
+          <FontAwesomeIcon icon={faUser} className='cursor-pointer text-xxs md:text-base mb-2' ref={userIconRef} onClick={toggleDropDown} />
           {iconDropMenu && (
-            <div className="absolute right-[-120px] mt-4 w-48 flex flex-col space-y-6 font-sm font-semibold bg-white text-black rounded-lg shadow-lg transition-transform duration-300 transform translate-y-0 opacity-100"
+            <div className="absolute right-[-120px] mt-4  flex flex-col space-y-6 font-sm font-semibold bg-white text-black shadow-lg transition-transform duration-300 transform translate-y-0 opacity-100 w-[300px] lg:w-48"
               ref={dropdownRef}
             >
               {user ? (
@@ -128,21 +134,18 @@ const FixedIcons = ({ scrolled }) => {
                     <a href="#">MY APPOINTMENTS</a>
                   </li>
                   <div className='px-4 py-2 hover:bg-gray-200 hover:cursor-pointer'>
-                    <button
-                      onClick={handleOpenModal}
-                    >
-                    <FontAwesomeIcon icon={faPlus} className="mr-2" />
-                        CREATE PRODUCT
+                    <button onClick={handleOpenModal}>
+                      <FontAwesomeIcon icon={faPlus} className="mr-2" />
+                      CREATE PRODUCT
                     </button>
                   </div>
-                  
                   <li className="px-4 py-2 hover:bg-gray-200">
                     <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
                     <a href="#" onClick={Logout}>LOG OUT</a>
                   </li>
                 </ul>
               ) : (
-                <ul className="py-6 text-black text-xxs montserrat-one font-normal">
+                <ul className="py-6 text-black text-xxs montserrat font-bold">
                   <li className="px-4 py-2 hover:bg-gray-200">
                     <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
                     <Link to='/register'>REGISTER</Link>
@@ -156,29 +159,29 @@ const FixedIcons = ({ scrolled }) => {
             </div>
           )}
         </div>
-        <FontAwesomeIcon icon={faSearch} className='cursor-pointer mt-1' />
-        {user && (
-          <Link to='/cart' className='relative'>
-            <FontAwesomeIcon icon={faShoppingCart} className='cursor-pointer' />
-            {cartItemCount > 0 && (
-              <span className='mr-3 absolute top-0 right-0 inline-block w-4 h-4 text-center text-white text-xs bg-red-600 rounded-full'>
-                {cartItemCount}
-              </span>
-            )}
-          </Link>
-        )}
-        <FontAwesomeIcon icon={faBars} className='cursor-pointer' onClick={toggleSidebar} />
+        <FontAwesomeIcon icon={faSearch} className='cursor-pointer text-xxs md:text-base' onClick={handleSearchClick} />
+        <Link to='/cart' className='relative'>
+          <FontAwesomeIcon icon={faShoppingCart} className='cursor-pointer text-xxs md:text-base mb-2' />
+          {cartItemCount > 0 && (
+            <span className='mr-3 absolute top-0 right-0 inline-block w-4 h-4 text-center text-white text-xs bg-red-600 rounded-full'>
+              {cartItemCount}
+            </span>
+          )}
+        </Link>
+        <FontAwesomeIcon icon={faBars} className='cursor-pointer text-xxs md:text-base' onClick={toggleSidebar} />
       </div>
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-       {sidebarOpen && (
-         <div
-           className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
-           onClick={toggleSidebar}
-         />
-       )}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"
+          onClick={toggleSidebar}
+        />
+      )}
       <ProductCreationModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleSubmitProduct} />
+      <Search isVisible={isSearchVisible} onClose={handleSearchClose} />
     </>
   );
 }
 
 export default FixedIcons;
+
