@@ -30,7 +30,7 @@ const ProductEditModal = ({ isOpen, onClose, onSubmit, product }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/categories');
+        const response = await fetch('https://e-commerce-brno.onrender.com/api/categories');
         const data = await response.json();
         setCategories(data);
       } catch (error) {

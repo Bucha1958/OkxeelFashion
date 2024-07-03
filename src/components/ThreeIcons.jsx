@@ -72,7 +72,7 @@ const ThreeIcons = ({ scrolled }) => {
   }, [iconDropMenu]);
 
   const handleSubmitProduct = async (formData) => {
-    const response = await fetch('http://localhost:3000/api/product', {
+    const response = await fetch('https://e-commerce-brno.onrender.com/api/product', {
       method: 'POST',
       body: formData,
     });
@@ -87,7 +87,7 @@ const ThreeIcons = ({ scrolled }) => {
 
 
   const Logout = () => {
-    fetch('http://localhost:3000/api/logout', {
+    fetch('https://e-commerce-brno.onrender.com/api/logout', {
       credentials: 'include',
       method: 'POST',
     })

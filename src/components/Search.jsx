@@ -19,7 +19,7 @@ const Search = ({ isVisible, onClose }) => {
     useEffect(() => {
         const fetchSearchResults = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/api/products?q=${encodeURIComponent(searchQuery)}`);
+                const response = await fetch(`https://e-commerce-brno.onrender.com/api/products?q=${encodeURIComponent(searchQuery)}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch search results');
                 }

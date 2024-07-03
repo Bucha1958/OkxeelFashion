@@ -7,7 +7,7 @@ export function UserContextProvider({ children }) {
 
   // Fetch user data when the component mounts
   useEffect(() => {
-    fetch('http://localhost:3000/api/profile', {
+    fetch('https://e-commerce-brno.onrender.com/api/profile', {
       credentials: 'include',
     })
       .then(response => response.json())

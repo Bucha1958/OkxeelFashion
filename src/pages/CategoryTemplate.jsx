@@ -16,7 +16,7 @@ const CategoryTemplate = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/products?category=${name}`, {
+        const response = await fetch(`https://e-commerce-brno.onrender.com/api/products?category=${name}`, {
           credentials: 'include',
         });
         const data = await response.json();

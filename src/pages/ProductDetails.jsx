@@ -42,7 +42,7 @@ const ProductDetails = () => {
 
   useEffect(() => {
     // Fetch product details from API
-    fetch(`http://localhost:3000/api/products/${id}`)
+    fetch(`https://e-commerce-brno.onrender.com/api/products/${id}`)
       .then(response => response.json())
       .then(data => {
         if (data.productFound) {
@@ -57,7 +57,7 @@ const ProductDetails = () => {
 
   const handleSubmitProduct = async (formData) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/products/${id}`, {
+      const response = await fetch(`https://e-commerce-brno.onrender.com/api/products/${id}`, {
         method: 'PUT',
         body: formData,
       });
@@ -77,7 +77,7 @@ const ProductDetails = () => {
 
   const deleteProduct = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/products/${id}`, {
+      const response = await fetch(`https://e-commerce-brno.onrender.com/api/products/${id}`, {
         method: 'DELETE',
       });
 

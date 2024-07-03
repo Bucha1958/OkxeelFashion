@@ -12,7 +12,7 @@ const Products = () => {
 
   useEffect(() => {
     // Fetch products from API
-    fetch('http://localhost:3000/api/products', {
+    fetch('https://e-commerce-brno.onrender.com/api/products', {
       credentials: 'include',
     })
       .then(response => response.json())
