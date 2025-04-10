@@ -7,6 +7,7 @@ import { faEye, faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import '../Hero.css';
 
 const Login = () => {
+  const API_URL = import.meta.env.VITE_API_BASE_URL
   const navigate = useNavigate();
   const { setUserInfo } = useContext(UserContext);
 
@@ -60,7 +61,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://e-commerce-brno.onrender.com/api/login', {
+      const response = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         body: JSON.stringify({ email: formData.email, password: formData.password }),
         headers: { 'Content-Type': 'application/json' },

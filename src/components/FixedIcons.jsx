@@ -18,6 +18,7 @@ const FixedIcons = ({ scrolled }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);  // State to manage search visibility
   const [isCurrencySelectorVisible, setIsCurrencySelectorVisible] = useState(false);
+  const API_URL = import.meta.env.VITE_API_BASE_URL
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -73,7 +74,7 @@ const FixedIcons = ({ scrolled }) => {
   };
 
   const handleSubmitProduct = async (formData) => {
-    const response = await fetch('https://e-commerce-brno.onrender.com/api/product', {
+    const response = await fetch(`${API_URL}/api/product`, {
       method: 'POST',
       body: formData,
     });
@@ -87,7 +88,7 @@ const FixedIcons = ({ scrolled }) => {
   };
 
   const Logout = () => {
-    fetch('https://e-commerce-brno.onrender.com/api/logout', {
+    fetch(`${API_URL}/api/logout`, {
       credentials: 'include',
       method: 'POST',
     })

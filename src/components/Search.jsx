@@ -11,6 +11,7 @@ const Search = ({ isVisible, onClose }) => {
     const [hovered, setHovered] = useState(false);
     const [liked, setLiked] = useState(false); // Assuming you have a like functionality
     const { convertPrice, currency } = useExchangeRate();
+    const API_URL = import.meta.env.VITE_API_BASE_URL
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
@@ -19,7 +20,7 @@ const Search = ({ isVisible, onClose }) => {
     useEffect(() => {
         const fetchSearchResults = async () => {
             try {
-                const response = await fetch(`https://e-commerce-brno.onrender.com/api/products?q=${encodeURIComponent(searchQuery)}`);
+                const response = await fetch(`${API_URL}/api/products?q=${encodeURIComponent(searchQuery)}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch search results');
                 }

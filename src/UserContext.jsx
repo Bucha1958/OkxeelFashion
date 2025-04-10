@@ -4,10 +4,11 @@ export const UserContext = createContext();
 
 export function UserContextProvider({ children }) {
   const [userInfo, setUserInfo] = useState(null);
+  const API_URL = import.meta.env.VITE_API_BASE_URL
 
   // Fetch user data when the component mounts
   useEffect(() => {
-    fetch('https://e-commerce-brno.onrender.com/api/profile', {
+    fetch(`${API_URL}/api/profile`, {
       credentials: 'include',
     })
       .then(response => response.json())

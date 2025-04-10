@@ -12,11 +12,12 @@ const CategoryTemplate = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const productsPerPage = 12;
+  const API_URL = import.meta.env.VITE_API_BASE_URL
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`https://e-commerce-brno.onrender.com/api/products?category=${name}`, {
+        const response = await fetch(`${API_URL}/api/products?category=${name}`, {
           credentials: 'include',
         });
         const data = await response.json();

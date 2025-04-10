@@ -8,11 +8,12 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 12;
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 
   useEffect(() => {
     // Fetch products from API
-    fetch('https://e-commerce-brno.onrender.com/api/products', {
+    fetch(`${API_URL}/api/products`, {
       credentials: 'include',
     })
       .then(response => response.json())

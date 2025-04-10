@@ -11,6 +11,7 @@ import DeleteProductModal from '../components/modals/DeleteProductModal';
 import { useExchangeRate } from '../ExchangeRateContext';
 
 const ProductDetails = () => {
+  const API_URL = import.meta.env.VITE_API_BASE_URL
   const navigate = useNavigate();
   const { id } = useParams();
   const { addToCart, cartItems } = useCart();
@@ -42,7 +43,7 @@ const ProductDetails = () => {
 
   useEffect(() => {
     // Fetch product details from API
-    fetch(`https://e-commerce-brno.onrender.com/api/products/${id}`)
+    fetch(`${API_URL}/api/products/${id}`)
       .then(response => response.json())
       .then(data => {
         if (data.productFound) {
@@ -57,7 +58,7 @@ const ProductDetails = () => {
 
   const handleSubmitProduct = async (formData) => {
     try {
-      const response = await fetch(`https://e-commerce-brno.onrender.com/api/products/${id}`, {
+      const response = await fetch(`${API_URL}/api/products/${id}`, {
         method: 'PUT',
         body: formData,
       });
@@ -77,7 +78,7 @@ const ProductDetails = () => {
 
   const deleteProduct = async () => {
     try {
-      const response = await fetch(`https://e-commerce-brno.onrender.com/api/products/${id}`, {
+      const response = await fetch(`${API_URL}/api/products/${id}`, {
         method: 'DELETE',
       });
 
