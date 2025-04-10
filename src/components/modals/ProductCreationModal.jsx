@@ -5,6 +5,7 @@ import { faSpinner, faTimes } from '@fortawesome/free-solid-svg-icons';
 import '../../Hero.css';
 
 const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
+  const API_URL = import.meta.env.VITE_API_BASE_URL
   const navigate = useNavigate();
   const [redirect, setRedirect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +21,7 @@ const ProductCreationModal = ({ isOpen, onClose, onSubmit }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('https://e-commerce-brno.onrender.com/api/categories');
+        const response = await fetch(`${API_URL}/api/categories`);
         const data = await response.json();
         setCategories(data);
       } catch (error) {

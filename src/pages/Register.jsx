@@ -6,7 +6,8 @@ import { faEye, faEyeSlash, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import '../Hero.css';
 
 const Register = () => {
-  const API_URL = import.meta.env.VITE_API_BASE_URL
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_AUTH = import.meta.env.VITE_AUTH_SERVICE_URL;
   const navigate = useNavigate();
   const [ redirect, setRedirect ] = useState(false);
   const [formData, setFormData] = useState({
@@ -73,7 +74,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/register`, {
+      const response = await fetch(`${API_AUTH}/api/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -19,7 +19,8 @@ const ThreeIcons = ({ scrolled }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false); 
-  const API_URL = import.meta.env.VITE_API_BASE_URL
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_AUTH = import.meta.env.VITE_AUTH_SERVICE_URL;
 
   const handleSearchClick = () => {
     setIsSearchVisible(true);  
@@ -88,7 +89,7 @@ const ThreeIcons = ({ scrolled }) => {
 
 
   const Logout = () => {
-    fetch(`${API_URL}/api/logout`, {
+    fetch(`${API_AUTH}/api/logout`, {
       credentials: 'include',
       method: 'POST',
     })

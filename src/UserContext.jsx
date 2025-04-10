@@ -4,11 +4,13 @@ export const UserContext = createContext();
 
 export function UserContextProvider({ children }) {
   const [userInfo, setUserInfo] = useState(null);
-  const API_URL = import.meta.env.VITE_API_BASE_URL
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_AUTH = import.meta.env.VITE_AUTH_SERVICE_URL;
+
 
   // Fetch user data when the component mounts
   useEffect(() => {
-    fetch(`${API_URL}/api/profile`, {
+    fetch(`${API_AUTH}/api/profile`, {
       credentials: 'include',
     })
       .then(response => response.json())

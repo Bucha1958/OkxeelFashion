@@ -11,7 +11,8 @@ import DeleteProductModal from '../components/modals/DeleteProductModal';
 import { useExchangeRate } from '../ExchangeRateContext';
 
 const ProductDetails = () => {
-  const API_URL = import.meta.env.VITE_API_BASE_URL
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_AUTH = import.meta.env.VITE_AUTH_SERVICE_URL;
   const navigate = useNavigate();
   const { id } = useParams();
   const { addToCart, cartItems } = useCart();
