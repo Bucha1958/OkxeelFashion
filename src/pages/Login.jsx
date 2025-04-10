@@ -62,7 +62,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_AUTH}/api/login`, {
+      const response = await fetch(`${API_AUTH}/api/auth/login`, {
         method: 'POST',
         body: JSON.stringify({ email: formData.email, password: formData.password }),
         headers: { 'Content-Type': 'application/json' },

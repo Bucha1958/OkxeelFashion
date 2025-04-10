@@ -74,7 +74,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_AUTH}/api/register`, {
+      const response = await fetch(`${API_AUTH}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
