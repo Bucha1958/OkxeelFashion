@@ -1,0 +1,48 @@
+name: Cleanup Old Docker Images
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # Daily at 3AM UTC
+  workflow_dispatch:     # Allow manual runs
+
+env:
+  DOCKER_REPO_OKXEEL: bucha1958/okxeel
+  KEEP_LATEST: 3
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Get Docker Hub Auth Token
+        id: get-token
+        run: |
+          TOKEN=$(curl -s -H "Content-Type: application/json" -X POST \
+            -d '{"username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_PASSWORD }}"}' \
+            https://hub.docker.com/v2/users/login/ | jq -r .token)
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: List and delete old tags for Okxeel frontend
+        env:
+          TOKEN: ${{ steps.get-token.outputs.token }}
+        run: |
+          REPO=${{ env.DOCKER_REPO_OKXEEL }}
+          AUTH="Authorization: JWT $TOKEN"
+
+          TAGS=$(curl -s -H "$AUTH" "https://hub.docker.com/v2/repositories/$REPO/tags?page_size=100" | jq -r '.results[].name' | grep -v latest)
+
+          echo "Found tags for okxeel frontend:"
+          echo "$TAGS"
+
+          COUNT=0
+          for TAG in $(echo "$TAGS" | sort -r); do
+            COUNT=$((COUNT+1))
+            if [ "$COUNT" -le "${KEEP_LATEST}" ]; then
+              echo "Keeping $TAG"
+              continue
+            fi
+            echo "Deleting tag: $TAG"
+            curl -s -X DELETE -H "$AUTH" "https://hub.docker.com/v2/repositories/$REPO/tags/$TAG/"
