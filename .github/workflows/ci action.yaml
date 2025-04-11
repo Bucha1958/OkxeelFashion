@@ -3,7 +3,7 @@ name: Auth Service CI
 on:
   push:
     paths:
-      - 'OKXEELFASHION/**'
+      - 'OkxeelFashion/**'
 
 jobs:
   build-and-push:
