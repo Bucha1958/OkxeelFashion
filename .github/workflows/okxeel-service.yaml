@@ -24,7 +24,7 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          cd auth-service
+          
           docker build -t ${{ secrets.DOCKER_USERNAME }}/okxeel:latest -t ${{ secrets.DOCKER_USERNAME }}/okxeel:${{ steps.tag.outputs.tag }} .
 
       - name: Push Docker images
