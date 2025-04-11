@@ -3,7 +3,7 @@ name: Okxeel Service CI
 on:
   push:
     paths:
-      - 'OkxeelFashion/**'
+      - '**'
 
 jobs:
   build-and-push:
