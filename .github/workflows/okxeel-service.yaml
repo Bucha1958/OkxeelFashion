@@ -22,6 +22,10 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      - name: Create .env file from secret
+        run: |
+          echo "${{ secrets.ENV_CONTENT }}" > .env
+
       - name: Build and tag Docker image
         run: |
           
