@@ -35,3 +35,15 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/okxeel:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/okxeel:${{ steps.tag.outputs.tag }}
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_DATA }}" > ~/.kube/config
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -n okxeel -f ./k8s/

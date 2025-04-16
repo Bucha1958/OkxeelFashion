@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: okxeel-deployment
+  namespace: okxeel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: okxeel
+  template:
+    metadata:
+      labels:
+        app: okxeel
+    spec:
+      containers:
+        - name: okxeel
+          image: bucha1958/okxeel:latest
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: okxeel-config
+            - secretRef:
+                name: okxeel-secret
