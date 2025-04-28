@@ -20,5 +20,3 @@ spec:
           envFrom:
             - configMapRef:
                 name: okxeel-config
-            - secretRef:
-                name: okxeel-secret
