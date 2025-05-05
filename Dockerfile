@@ -1,6 +1,14 @@
 # Step 1: Build the React application
 FROM node:18-alpine AS build
 
+# Accept build-time environment variables
+ARG VITE_API_BASE_URL
+ARG VITE_AUTH_SERVICE_URL
+
+# Set env vars for Vite to pick up
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_AUTH_SERVICE_URL=$VITE_AUTH_SERVICE_URL
+
 # Set the working directory inside the container
 WORKDIR /app
 
