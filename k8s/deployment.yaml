@@ -34,34 +34,3 @@ spec:
       port: 80
       targetPort: 80
   type: ClusterIP
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-    name: okxeel-ingress
-spec:
-  ingressClassName: traefik
-  rules:
-  - http:
-      paths:
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: okxeel-service
-              port:
-                number: 80
-        - path: /api/auth
-          pathType: Prefix
-          backend:
-            service:
-              name: auth-service
-              port:
-                number: 4000
-        - path: /api/products
-          pathType: Prefix
-          backend:
-            service:
-              name: general-service
-              port:
-                number: 3000
